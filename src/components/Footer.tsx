@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { FaFacebook, FaTwitter, FaInstagram, FaPinterest, FaYoutube, FaWhatsapp } from 'react-icons/fa';
 import '@/styles/css/Footer.css';
 

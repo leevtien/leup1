@@ -33,7 +33,7 @@ export default function Header() {
                     <div className="main-header">
                         <div className="logo">
                             <Link href="/">
-                                logo
+                                Leup Shop
                             </Link>
                         </div>
                         

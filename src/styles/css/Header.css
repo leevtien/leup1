@@ -199,3 +199,22 @@
     display: flex;
     align-items: center;
   }
+
+  /* Responsive Design */
+    @media screen and (max-width: 768px) {
+      .search-box {
+        width: 50%;
+      }
+  
+      .user-actions {
+        width: 100%;
+      }
+  
+      .category-menu {
+        display: none;
+      }
+  
+      .additional-links {
+        display: none;
+      }
+    }

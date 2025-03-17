@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 import { 
   FaGamepad, 
@@ -167,10 +167,10 @@ export default function MainBanner() {
                   <Image 
                     src={slide.image} 
                     alt={slide.title} 
-                    fill
+                    layout="fill"
                     style={{ objectFit: 'cover' }}
                     priority={index === 0}
-                  />
+                    />
                   <div className="banner-content">
                     <h1>{slide.title}</h1>
                     <p>{slide.description}</p>
@@ -216,9 +216,9 @@ export default function MainBanner() {
               <Image 
                 src="/images/products/vpn-service.jpg" 
                 alt="FAKE IP VPN Service" 
-                fill
+                layout="fill"
                 style={{ objectFit: 'cover' }}
-              />
+                />
             </div>
 
             {/* Bottom Sub-Banner */}
@@ -232,7 +232,7 @@ export default function MainBanner() {
               <Image 
                 src="/images/products/ai-chatbot.jpg" 
                 alt="AI Chatbot Service" 
-                fill
+                layout='fill'
                 style={{ objectFit: 'cover' }}
               />
             </div>
@@ -251,7 +251,7 @@ export default function MainBanner() {
             <Image 
               src="/images/products/steam-wallet.jpg" 
               alt="Steam Wallet Top-up" 
-              fill
+              layout='fill'
               style={{ objectFit: 'cover' }}
             />
           </div>
@@ -266,7 +266,7 @@ export default function MainBanner() {
             <Image 
               src="/images/products/design-software.jpg" 
               alt="Design Software" 
-              fill
+              layout='fill'
               style={{ objectFit: 'cover' }}
             />
           </div>
@@ -281,7 +281,7 @@ export default function MainBanner() {
             <Image 
               src="/images/products/steam-offline.jpg" 
               alt="Steam Offline Account" 
-              fill
+              layout='fill'
               style={{ objectFit: 'cover' }}
             />
           </div>
@@ -296,7 +296,7 @@ export default function MainBanner() {
             <Image 
               src="/images/products/ms-office.jpg" 
               alt="Microsoft Office License" 
-              fill
+              layout='fill'
               style={{ objectFit: 'cover' }}
             />
           </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 import { 
   FaStar, 
@@ -9,7 +9,6 @@ import {
   FaRegStar, 
   FaEye, 
   FaShoppingCart, 
-  FaHeart,
   FaClock
 } from 'react-icons/fa';
 import '@/styles/css/productCard.css';
@@ -59,7 +58,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'default' 
   // Calculate discounted price if applicable
   const discountedPrice = product.discount 
     ? (product.price * (1 - product.discount / 100)).toFixed(2) 
-    : product.price.toFixed(2);
+    : null;
   
   return (
     <div 
@@ -68,26 +67,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'default' 
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product badges */}
-      <div className="product-badges">
-        {product.discount && product.discount > 0 && (
-          <span className="badge discount-badge">-{product.discount}%</span>
+    <div className="product-badges">
+      {typeof product.discount === "number" && product.discount > 0 && (
+        <span className="badge discount-badge">-{product.discount}%</span>
+      )}
+      {product.daysAgo !== undefined && product.daysAgo <= 7 && (
+        <span className="badge new-badge">New</span>
         )}
-        {product.isNew && (
-          <span className="badge new-badge">
-            {product.daysAgo !== undefined ? (
-              <>
-                <FaClock className="badge-icon" /> 
-                {product.daysAgo} {product.daysAgo === 1 ? 'day' : 'days'} ago
-              </>
-            ) : (
-              'New'
-            )}
-          </span>
-        )}
-        {product.inStock === false && (
-          <span className="badge out-of-stock-badge">Out of Stock</span>
-        )}
-      </div>
+      {product.inStock === false && (
+        <span className="badge out-of-stock-badge">Out of Stock</span>
+      )}
+    </div>
       
       {/* Product Image */}
       <div className="product-image">
@@ -95,14 +85,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'default' 
           <Image 
             src={product.image} 
             alt={product.name} 
-            width={300} 
-            height={300}
-            layout="responsive" 
+            // width={300} 
+            // height={300}
+            layout="fill" 
           />
         </Link>
         
         {/* Quick action buttons that appear on hover */}
-        <div className={`product-actions ${isHovered ? 'visible' : ''}`}>
+        {/* <div className={`product-actions ${isHovered ? 'visible' : ''}`}>
           <button className="action-btn view-btn" title="Quick view">
             <FaEye />
           </button>
@@ -112,7 +102,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, variant = 'default' 
           <button className="action-btn wishlist-btn" title="Add to wishlist">
             <FaHeart />
           </button>
-        </div>
+        </div> */}
       </div>
       
       {/* Product Information */}

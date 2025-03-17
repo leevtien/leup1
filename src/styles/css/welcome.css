@@ -1,0 +1,90 @@
+/* Welcome Page Styles */
+.welcome-page .auth-box {
+    text-align: center;
+  }
+  
+  .welcome-header {
+    margin-bottom: 30px;
+  }
+  
+  .success-icon {
+    font-size: 60px;
+    color: #4CAF50;
+    margin-bottom: 20px;
+  }
+  
+  .verification-notice {
+    background-color: #e8f5e9;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  
+  .notice-icon {
+    font-size: 24px;
+    color: #4CAF50;
+    margin-right: 15px;
+    padding-top: 5px;
+  }
+  
+  .notice-content h3 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .notice-content p {
+    margin: 0 0 10px;
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  .next-steps {
+    margin-bottom: 30px;
+    text-align: left;
+  }
+  
+  .next-steps h3 {
+    margin: 0 0 15px;
+    font-size: 18px;
+    color: #333;
+  }
+  
+  .next-steps ul {
+    padding-left: 20px;
+    margin: 0;
+  }
+  
+  .next-steps li {
+    margin-bottom: 8px;
+    color: #555;
+  }
+  
+  .welcome-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .secondary-button {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: transparent;
+    color: #4CAF50;
+    font-weight: 600;
+    font-size: 16px;
+    border: 1px solid #4CAF50;
+    border-radius: 6px;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  
+  .secondary-button:hover {
+    background-color: rgba(76, 175, 80, 0.1);
+  }
