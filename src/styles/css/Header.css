@@ -1,220 +1,383 @@
+/* Header.css - Main header styles */
+
 .site-header {
-    font-family: Arial, sans-serif;
-    width: 100%;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-  }
-  
-  /* Layer 1 - Top information bar */
-  .header-layer-1 {
-    background-color: #f5f5f5;
-    padding: 8px 0;
-    font-size: 14px;
-  }
-  
-  .top-nav ul {
-    display: flex;
-    justify-content: flex-end;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .top-nav ul li {
-    margin-left: 20px;
-  }
-  
-  .top-nav ul li a {
-    color: #666;
-    text-decoration: none;
-  }
-  
-  .top-nav ul li a:hover {
-    color: #333;
-  }
-  
-  /* Layer 2 - Main header */
-  .header-layer-2 {
-    padding: 20px 0;
-    border-bottom: 1px solid #eee;
+  width: 100%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fff;
+}
+
+/* Layer 1 - Top info bar */
+.header-layer-1 {
+  background-color: #f8f9fa;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.top-nav ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.top-nav a {
+  color: #6c757d;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.top-nav a:hover {
+  color: #212529;
+}
+
+/* Layer 2 - Main header with logo, search, account */
+.header-layer-2 {
+  padding: 15px 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+.main-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+/* Logo styles */
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  min-width: 120px;
+}
+
+.logo a {
+  color: #343a40;
+  text-decoration: none;
+}
+
+/* Search box styles - optimized */
+.search-box {
+  flex: 1;
+  max-width: 500px;
+}
+
+.search-box form {
+  display: flex;
+  position: relative;
+  height: 40px;
+}
+
+.search-box input {
+  width: 100%;
+  height: 100%;
+  padding: 0 40px 0 15px;
+  border: 1px solid #ced4da;
+  border-radius: 20px;
+  outline: none;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box input:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.search-box button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+  transition: color 0.2s;
+}
+
+.search-box button:hover {
+  color: #343a40;
+}
+
+/* User actions styles - more compact */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.login-register, .shopping-cart {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #343a40;
+  text-decoration: none;
+  padding: 5px;
+  transition: color 0.2s;
+}
+
+.login-register:hover, .shopping-cart:hover {
+  color: #007bff;
+}
+
+.user-icon, .cart-icon {
+  font-size: 1.2rem;
+}
+
+.cart-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  font-size: 0.7rem;
+  margin-left: -5px;
+}
+
+/* Layer 3 - Navigation and links */
+.header-layer-3 {
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.bottom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 45px;
+}
+
+.category-menu {
+  display: flex;
+  align-items: center;
+}
+
+.menu-icon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  color: #343a40;
+  cursor: pointer;
+}
+
+.hamburger-icon {
+  font-size: 1.2rem;
+}
+
+.additional-links {
+  display: flex;
+  gap: 20px;
+}
+
+.additional-links a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #6c757d;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.additional-links a:hover {
+  color: #343a40;
+}
+
+.additional-links .icon {
+  font-size: 1rem;
+}
+
+/* Mobile optimizations */
+.mobile-menu-toggle, 
+.search-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #343a40;
+  cursor: pointer;
+  padding: 10px;
+  margin: 0;
+}
+
+.mobile-menu {
+  display: none;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+.mobile-navigation ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mobile-navigation li {
+  margin-bottom: 15px;
+}
+
+.mobile-navigation a {
+  color: #343a40;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+/* Mobile search bar specific styles */
+.mobile-search-bar {
+  flex: 1;
+  margin: 0 10px;
+  display: none;
+}
+
+.mobile-search-bar form {
+  display: flex;
+  position: relative;
+  height: 36px;
+}
+
+.mobile-search-bar input {
+  width: 100%;
+  height: 100%;
+  padding: 0 35px 0 10px;
+  border: 1px solid #ced4da;
+  border-radius: 18px;
+  outline: none;
+  font-size: 0.85rem;
+}
+
+.mobile-search-bar button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 35px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6c757d;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 767px) {
+  .site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
   }
   
   .main-header {
-    display: flex;
+    padding: 0;
+    height: 60px;
     justify-content: space-between;
-    align-items: center;
   }
   
   .logo {
-    flex: 0 0 auto; /* Don't allow the logo to grow or shrink */
-  }
-
-  .logo img {
-    height: 50px;
-    width: auto;
+    display: none; /* Hide logo on mobile as requested */
   }
   
   .search-box {
-    flex: 0 0 auto; /* Don't allow the search box to grow or shrink */
-    width: 35%; /* Set width to a percentage of the container */
+    display: none; /* Hide desktop search on mobile */
   }
   
-  .search-box form {
-    display: flex;
-    width: 100%; /* Form takes full width of its container */
+  .mobile-search-bar {
+    display: block; /* Show mobile search bar */
   }
   
-  .search-box input {
-    flex-grow: 1;
-    border: 1px solid #ddd;
-    border-radius: 4px 0 0 4px;
-    padding: 10px 15px;
-    font-size: 16px;
-    outline: none;
-  }
-  .search-box input:focus {
-    border-color: #4CAF50; /* Optional: change border color when focused instead */
-    box-shadow: none; /* Removes any possible shadow effect on focus */
-  }
-  
-  .search-box button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 0 4px 4px 0;
-    padding: 0 15px;
-    cursor: pointer;
-  }
-  
-  /* Updated user actions to ensure equal spacing */
   .user-actions {
-    flex: 0 0 auto; /* Don't allow to grow or shrink */
-    display: flex;
-    align-items: center;
-    justify-content: space-between; /* This ensures equal spacing between children */
-    width: 200px; /* Set a fixed width for the user actions container */
+    display: none; /* Hide normal user actions on mobile */
   }
   
-  .user-actions a {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #333;
-  }
-  
-  .cart-count {
-    background-color: #ff4444;
-    color: white;
-    border-radius: 50%;
-    width: 18px;
-    height: 18px;
+  .mobile-menu-toggle {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    position: absolute;
-    top: -8px;
-    right: -8px;
+    width: 40px;
+    height: 40px;
   }
   
-  /* Layer 3 - Navigation */
-  .header-layer-3 {
-    background-color: #333;
-    padding: 15px 0;
-    color: white;
-  }
-  
-  .bottom-header {
+  /* Show the cart icon on mobile */
+  .shopping-cart {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
   }
   
-  .category-menu ul {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .shopping-cart span:not(.cart-count) {
+    display: none;
   }
   
-  .category-menu ul li {
-    margin-right: 20px;
+  .header-layer-3:not(.mobile-open) {
+    display: none;
   }
   
-  .category-menu ul li a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
+  
+  
+  .mobile-menu {
+    display: block;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow-y: auto;
+    z-index: 1050;
+    animation: slideIn 0.3s ease;
   }
   
   .additional-links {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-
-  .additional-links a {
-    color: white;
-    text-decoration: none;
-    margin-left: 20px;
-    display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 15px;
   }
   
-  .additional-links a:hover,
-  .category-menu ul li a:hover {
-    color: #4CAF50;
+  .additional-links span {
+    display: inline;
   }
-
-  .additional-links .icon {
-    margin-right: 5px;
-    font-size: 1.1rem;
-  }
-
-  .menu-icon {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
-
-  .hamburger-icon {
-    margin-right: 5px;
-  }
-
-  .user-icon, .cart-icon {
-    margin-right: 5px;
-  }
-
-  .search-icon, .user-icon, .cart-icon, .hamburger-icon {
-    font-size: 1.2rem;
-  }
-
-  /* Make sure cart-count is positioned correctly with the new icons */
-  .shopping-cart {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-
-  /* Responsive Design */
-    @media screen and (max-width: 768px) {
-      .search-box {
-        width: 50%;
-      }
   
-      .user-actions {
-        width: 100%;
-      }
+  /* Content area needs padding to account for fixed header */
+  body {
+    padding-top: 60px;
+  }
   
-      .category-menu {
-        display: none;
-      }
-  
-      .additional-links {
-        display: none;
-      }
+  @keyframes slideIn {
+    from {
+      transform: translateX(-100%);
     }
+    to {
+      transform: translateX(0);
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .main-header {
+    padding: 0 5px;
+  }
+}

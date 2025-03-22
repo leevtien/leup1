@@ -157,12 +157,12 @@ export default function SignUp() {
         <div className="auth-box signup-box">
           <div className="auth-header">
             <Link href="/" className="auth-logo">
-              <Image 
+              {/* <Image 
                 src="/images/logo.png" 
                 alt="Company Logo" 
                 width={150} 
                 height={40} 
-              />
+              /> */}
             </Link>
             <h1>Create an Account</h1>
             <p>Join our community and start shopping today!</p>

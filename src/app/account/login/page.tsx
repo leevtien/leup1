@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle, FaFacebook } from "react-icons/fa";
-import { signIn, signInWithGoogle, resetPassword } from "@/services/authService";
+import { signIn, signInWithGoogle, resetPassword, getCurrentUserProfile } from "@/services/authService";
 import "@/styles/css/auth.css";
 
 export default function Login() {
@@ -36,6 +36,23 @@ export default function Login() {
     setError("");
   };
 
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      try {
+        const userProfile = await getCurrentUserProfile();
+        if (userProfile) {
+          // User is already logged in, redirect to account page
+          router.push("/account");
+        }
+      } catch (err) {
+        console.error("Auth check error:", err);
+      }
+    };
+    
+    checkLoggedIn();
+  }, [router]);
+
   // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -56,6 +73,14 @@ export default function Login() {
     
     try {
       await signIn(email, password, rememberMe);
+      
+      // Fetch user profile after successful login
+      const userProfile = await getCurrentUserProfile();
+      if (!userProfile) {
+        throw new Error("Could not retrieve user profile");
+      }
+      
+      // Navigate to account page
       router.push("/account");
     } catch (err) {
       console.error("Login error:", err);
@@ -80,7 +105,15 @@ export default function Login() {
     try {
       setIsLoading(true);
       setError("");
+      
       await signInWithGoogle();
+      
+      // Fetch user profile after successful Google login
+      const userProfile = await getCurrentUserProfile();
+      if (!userProfile) {
+        throw new Error("Could not retrieve user profile");
+      }
+      
       router.push("/account");
     } catch (err) {
       console.error("Google sign-in error:", err);
@@ -123,14 +156,14 @@ export default function Login() {
       <div className="auth-container">
         <div className="auth-box login-box">
           <div className="auth-header">
-            <Link href="/" className="auth-logo">
+            {/* <Link href="/" className="auth-logo">
               <Image 
                 src="/images/logo.png" 
                 alt="Company Logo" 
                 width={150} 
                 height={40} 
               />
-            </Link>
+            </Link> */}
             <h1>Welcome Back</h1>
             <p>Sign in to your account to continue</p>
           </div>
@@ -188,7 +221,7 @@ export default function Login() {
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
                     />
-                    <label htmlFor="remember">Remember me</label>
+                    <label htmlFor="remember"> Remember me</label>
                   </div>
                   <button 
                     type="button" 
@@ -308,7 +341,7 @@ export default function Login() {
           
           <div className="auth-footer">
             <p>
-              Don't have an account? <Link href="/account/signup">Sign up</Link>
+              Don't have an account? <Link href="/account/register">Register</Link>
             </p>
           </div>
         </div>

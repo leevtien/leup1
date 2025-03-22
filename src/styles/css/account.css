@@ -965,3 +965,65 @@
     align-items: center;
     padding: 20px;
   }
+
+  /* Add these styles to your account.css file */
+
+/* Loading state */
+.loading-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 500px;
+}
+
+.loading-spinner {
+  text-align: center;
+}
+
+.spinner-icon {
+  font-size: 40px;
+  color: #4CAF50;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  margin-top: 15px;
+  color: #666;
+}
+
+/* User profile photo tweaks */
+.avatar-container img {
+  object-fit: cover;
+}
+
+/* Additional responsive fixes */
+@media (max-width: 768px) {
+  .account-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .account-sidebar {
+    border-right: none;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px;
+  }
+  
+  .account-nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .account-nav li {
+    flex: 1 1 calc(50% - 10px);
+  }
+  
+  .logout-item {
+    width: 100%;
+  }
+}

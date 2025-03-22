@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "firebase": "^11.4.0",
     "firebase-auth": "^0.1.2",
     "firebase-messaging": "^1.0.6",

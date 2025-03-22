@@ -1,44 +1,35 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from "next/legacy/image";
-import { FaUser, FaShoppingBag, FaHeart, FaCreditCard, FaBell, FaLock, FaSignOutAlt, FaDownload } from 'react-icons/fa';
+import { FaUser, FaShoppingBag, FaHeart, FaCreditCard, FaBell, FaLock, FaSignOutAlt, FaDownload, FaSpinner } from 'react-icons/fa';
+import { useUser } from '@/context/userContext';
+import { logOut } from '@/services/authService';
+import { getUserOrders, Order } from '@/services/ordersService.ts';
 import '@/styles/css/account.css';
 
-// Mock user data
-const userData = {
-  id: 1,
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  avatar: '/images/avatar-placeholder.jpg',
-  memberSince: 'June 2023',
-  purchases: 12,
-  wishlistItems: 5,
-  activeSubscriptions: 3
-};
-
-// Mock recent orders
-const recentOrders = [
+// Sample data for subscriptions and payment methods for UI demonstration
+// This will be replaced with real data from the database when those features are implemented
+const sampleSubscriptions = [
   {
-    id: 'ORD-39847',
-    date: '2025-03-10',
-    total: 59.99,
-    status: 'Delivered',
-    items: [
-      { id: 1, name: 'Netflix Premium', price: 19.99, image: '/images/products/netflix-premium.jpg' },
-      { id: 2, name: 'Spotify Family Plan', price: 14.99, image: '/images/products/spotify.jpg' },
-      { id: 3, name: 'Office 365', price: 25.01, image: '/images/products/office-365.jpg' }
-    ]
+    id: 1,
+    name: 'Netflix Premium',
+    plan: '4K UHD Plan',
+    renewalDate: 'April 15, 2025',
+    price: 19.99,
+    period: 'month',
+    image: '/images/products/netflix-premium.jpg'
   },
   {
-    id: 'ORD-39721',
-    date: '2025-03-01',
-    total: 29.99,
-    status: 'Delivered',
-    items: [
-      { id: 4, name: 'Adobe Photoshop', price: 29.99, image: '/images/products/adobe-cc.jpg' }
-    ]
+    id: 2,
+    name: 'Microsoft Office 365',
+    plan: 'Family Plan',
+    renewalDate: 'May 21, 2025',
+    price: 99.99,
+    period: 'year',
+    image: '/images/products/office-365.jpg'
   }
 ];
 
@@ -55,6 +46,80 @@ const accountTabs = [
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const { user, loading, refreshUserProfile } = useUser();
+  const router = useRouter();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/account/login');
+    }
+  }, [user, loading, router]);
+
+  // Fetch user orders
+  useEffect(() => {
+    const fetchOrders = async () => {
+      if (user && user.uid) {
+        try {
+          setOrdersLoading(true);
+          const userOrders = await getUserOrders(user.uid);
+          setOrders(userOrders);
+        } catch (error) {
+          console.error("Error fetching orders:", error);
+        } finally {
+          setOrdersLoading(false);
+        }
+      }
+    };
+
+    if (user && user.uid) {
+      fetchOrders();
+    }
+  }, [user]);
+
+  const handleSignOut = async () => {
+    try {
+      await logOut();
+      // Clear any local user state
+      await refreshUserProfile();
+      router.push('/');
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  // Format member since date
+  const formatMemberSince = (dateString) => {
+    if (!dateString) return 'New Member';
+    
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
+    } catch (error) {
+      return 'New Member';
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="account-page loading-state">
+        <div className="container">
+          <div className="loading-spinner">
+            <FaSpinner className="spinner-icon" />
+            <p>Loading your account information...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is not logged in and we're not loading, component will redirect
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="account-page">
@@ -67,16 +132,17 @@ export default function AccountPage() {
             <div className="user-info">
               <div className="avatar-container">
                 <Image 
-                  src={userData.avatar} 
-                  alt={userData.name}
+                  src={user.photoURL || '/images/avatar-placeholder.jpg'} 
+                  alt={user.fullName || 'User Avatar'}
                   width={80}
                   height={80}
                   className="user-avatar"
+                  unoptimized={!user.photoURL?.startsWith('/')} // For external URLs
                 />
               </div>
-              <h3 className="user-name">{userData.name}</h3>
-              <p className="user-email">{userData.email}</p>
-              <p className="member-since">Member since {userData.memberSince}</p>
+              <h3 className="user-name">{user.fullName || 'User'}</h3>
+              <p className="user-email">{user.email}</p>
+              <p className="member-since">Member since {formatMemberSince(user.memberSince)}</p>
             </div>
 
             <nav className="account-nav">
@@ -93,7 +159,7 @@ export default function AccountPage() {
                   </li>
                 ))}
                 <li className="logout-item">
-                  <button className="nav-link logout">
+                  <button className="nav-link logout" onClick={handleSignOut}>
                     <span className="icon"><FaSignOutAlt /></span>
                     <span className="label">Sign Out</span>
                   </button>
@@ -114,7 +180,7 @@ export default function AccountPage() {
                     <div className="stat-icon"><FaShoppingBag /></div>
                     <div className="stat-content">
                       <h3>Purchases</h3>
-                      <p className="stat-value">{userData.purchases}</p>
+                      <p className="stat-value">{orders.length}</p>
                     </div>
                   </div>
                   
@@ -122,7 +188,7 @@ export default function AccountPage() {
                     <div className="stat-icon"><FaHeart /></div>
                     <div className="stat-content">
                       <h3>Wishlist</h3>
-                      <p className="stat-value">{userData.wishlistItems}</p>
+                      <p className="stat-value">0</p>
                     </div>
                   </div>
                   
@@ -130,7 +196,7 @@ export default function AccountPage() {
                     <div className="stat-icon"><FaDownload /></div>
                     <div className="stat-content">
                       <h3>Subscriptions</h3>
-                      <p className="stat-value">{userData.activeSubscriptions}</p>
+                      <p className="stat-value">{sampleSubscriptions.length}</p>
                     </div>
                   </div>
                 </div>
@@ -138,61 +204,81 @@ export default function AccountPage() {
                 <div className="recent-orders">
                   <div className="section-header">
                     <h3>Recent Orders</h3>
-                    <Link href="#" className="view-all" onClick={() => setActiveTab('orders')}>
+                    <Link href="#" className="view-all" onClick={(e) => {
+                      e.preventDefault();
+                      setActiveTab('orders');
+                    }}>
                       View all
                     </Link>
                   </div>
                   
-                  {recentOrders.slice(0, 2).map(order => (
-                    <div className="order-card" key={order.id}>
-                      <div className="order-header">
-                        <div>
-                          <span className="order-id">{order.id}</span>
-                          <span className="order-date">
-                            {new Date(order.date).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
-                            })}
-                          </span>
-                        </div>
-                        <div>
-                          <span className={`order-status ${order.status.toLowerCase()}`}>
-                            {order.status}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="order-items">
-                        {order.items.map(item => (
-                          <div className="order-item" key={item.id}>
-                            <div className="item-image">
-                              <Image 
-                                src={item.image} 
-                                alt={item.name}
-                                width={60}
-                                height={60}
-                              />
-                            </div>
-                            <div className="item-details">
-                              <h4>{item.name}</h4>
-                              <p className="item-price">${item.price.toFixed(2)}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      
-                      <div className="order-footer">
-                        <p className="order-total">
-                          <strong>Total:</strong> ${order.total.toFixed(2)}
-                        </p>
-                        <div className="order-actions">
-                          <button className="btn btn-outline">Download</button>
-                          <button className="btn btn-outline">View Details</button>
-                        </div>
-                      </div>
+                  {ordersLoading ? (
+                    <div className="loading-indicator">
+                      <FaSpinner className="spinner-icon" />
+                      <p>Loading your orders...</p>
                     </div>
-                  ))}
+                  ) : orders.length > 0 ? (
+                    orders.slice(0, 2).map(order => (
+                      <div className="order-card" key={order.id}>
+                        <div className="order-header">
+                          <div>
+                            <span className="order-id">{order.id?.substring(0, 6) || 'Order'}</span>
+                            <span className="order-date">
+                              {order.date instanceof Date ? 
+                                order.date.toLocaleDateString('en-US', { 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                }) : 'N/A'
+                              }
+                            </span>
+                          </div>
+                          <div>
+                            <span className={`order-status ${(order.status || 'pending').toLowerCase()}`}>
+                              {order.status || 'Pending'}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="order-items">
+                          {(order.items || []).map((item, index) => (
+                            <div className="order-item" key={item.id || index}>
+                              <div className="item-image">
+                                <Image 
+                                  src={item.image || '/images/placeholder.jpg'} 
+                                  alt={item.name || 'Product'}
+                                  width={60}
+                                  height={60}
+                                  unoptimized={!item.image?.startsWith('/')} // For external URLs
+                                />
+                              </div>
+                              <div className="item-details">
+                                <h4>{item.name || 'Product'}</h4>
+                                <p className="item-price">${(item.price || 0).toFixed(2)}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="order-footer">
+                          <p className="order-total">
+                            <strong>Total:</strong> ${(order.total || 0).toFixed(2)}
+                          </p>
+                          <div className="order-actions">
+                            <button className="btn btn-outline">Download</button>
+                            <button className="btn btn-outline">View Details</button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="empty-state">
+                      <FaShoppingBag className="empty-icon" />
+                      <h3>No orders yet</h3>
+                      <p>Your order history will appear here once you make a purchase</p>
+                      <Link href="/products" className="btn btn-primary">Start Shopping</Link>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -218,62 +304,79 @@ export default function AccountPage() {
                   </div>
                 </div>
                 
-                <div className="orders-list">
-                  {recentOrders.map(order => (
-                    <div className="order-card" key={order.id}>
-                      <div className="order-header">
-                        <div>
-                          <span className="order-id">{order.id}</span>
-                          <span className="order-date">
-                            {new Date(order.date).toLocaleDateString('en-US', { 
-                              year: 'numeric', 
-                              month: 'long', 
-                              day: 'numeric' 
-                            })}
-                          </span>
-                        </div>
-                        <div>
-                          <span className={`order-status ${order.status.toLowerCase()}`}>
-                            {order.status}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <div className="order-items">
-                        {order.items.map(item => (
-                          <div className="order-item" key={item.id}>
-                            <div className="item-image">
-                              <Image 
-                                src={item.image} 
-                                alt={item.name}
-                                width={60}
-                                height={60}
-                              />
-                            </div>
-                            <div className="item-details">
-                              <h4>{item.name}</h4>
-                              <p className="item-price">${item.price.toFixed(2)}</p>
-                            </div>
+                {ordersLoading ? (
+                  <div className="loading-indicator">
+                    <FaSpinner className="spinner-icon" />
+                    <p>Loading your orders...</p>
+                  </div>
+                ) : orders.length > 0 ? (
+                  <div className="orders-list">
+                    {orders.map(order => (
+                      <div className="order-card" key={order.id}>
+                        <div className="order-header">
+                          <div>
+                            <span className="order-id">{order.id?.substring(0, 6) || 'Order'}</span>
+                            <span className="order-date">
+                              {order.date instanceof Date ? 
+                                order.date.toLocaleDateString('en-US', { 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                }) : 'N/A'
+                              }
+                            </span>
                           </div>
-                        ))}
-                      </div>
-                      
-                      <div className="order-footer">
-                        <p className="order-total">
-                          <strong>Total:</strong> ${order.total.toFixed(2)}
-                        </p>
-                        <div className="order-actions">
-                          <button className="btn btn-outline">Download</button>
-                          <button className="btn btn-primary">View Details</button>
+                          <div>
+                            <span className={`order-status ${(order.status || 'pending').toLowerCase()}`}>
+                              {order.status || 'Pending'}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="order-items">
+                          {(order.items || []).map((item, index) => (
+                            <div className="order-item" key={item.id || index}>
+                              <div className="item-image">
+                                <Image 
+                                  src={item.image || '/images/placeholder.jpg'} 
+                                  alt={item.name || 'Product'}
+                                  width={60}
+                                  height={60}
+                                  unoptimized={!item.image?.startsWith('/')} // For external URLs
+                                />
+                              </div>
+                              <div className="item-details">
+                                <h4>{item.name || 'Product'}</h4>
+                                <p className="item-price">${(item.price || 0).toFixed(2)}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        <div className="order-footer">
+                          <p className="order-total">
+                            <strong>Total:</strong> ${(order.total || 0).toFixed(2)}
+                          </p>
+                          <div className="order-actions">
+                            <button className="btn btn-outline">Download</button>
+                            <button className="btn btn-primary">View Details</button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state">
+                    <FaShoppingBag className="empty-icon" />
+                    <h3>No orders yet</h3>
+                    <p>Your order history will appear here once you make a purchase</p>
+                    <Link href="/products" className="btn btn-primary">Start Shopping</Link>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Wishlist Tab (placeholder) */}
+            {/* Wishlist Tab */}
             {activeTab === 'wishlist' && (
               <div className="tab-content">
                 <h2>My Wishlist</h2>
@@ -287,62 +390,41 @@ export default function AccountPage() {
               </div>
             )}
 
-            {/* Subscriptions Tab (placeholder) */}
+            {/* Subscriptions Tab */}
             {activeTab === 'subscriptions' && (
               <div className="tab-content">
                 <h2>My Subscriptions</h2>
                 <p>Manage your digital subscriptions.</p>
                 <div className="subscription-cards">
-                  <div className="subscription-card">
-                    <div className="subscription-logo">
-                      <Image 
-                        src="/images/products/netflix-premium.jpg"
-                        alt="Netflix"
-                        width={60}
-                        height={60}
-                      />
+                  {sampleSubscriptions.map(subscription => (
+                    <div className="subscription-card" key={subscription.id}>
+                      <div className="subscription-logo">
+                        <Image 
+                          src={subscription.image}
+                          alt={subscription.name}
+                          width={60}
+                          height={60}
+                        />
+                      </div>
+                      <div className="subscription-details">
+                        <h3>{subscription.name}</h3>
+                        <p className="subscription-plan">{subscription.plan}</p>
+                        <p className="subscription-renewal">Renews on {subscription.renewalDate}</p>
+                      </div>
+                      <div className="subscription-price">
+                        <span>${subscription.price.toFixed(2)}</span>
+                        <span className="period">/ {subscription.period}</span>
+                      </div>
+                      <div className="subscription-actions">
+                        <button className="btn btn-sm btn-outline">Manage</button>
+                      </div>
                     </div>
-                    <div className="subscription-details">
-                      <h3>Netflix Premium</h3>
-                      <p className="subscription-plan">4K UHD Plan</p>
-                      <p className="subscription-renewal">Renews on April 15, 2025</p>
-                    </div>
-                    <div className="subscription-price">
-                      <span>$19.99</span>
-                      <span className="period">/ month</span>
-                    </div>
-                    <div className="subscription-actions">
-                      <button className="btn btn-sm btn-outline">Manage</button>
-                    </div>
-                  </div>
-                  
-                  <div className="subscription-card">
-                    <div className="subscription-logo">
-                      <Image 
-                        src="/images/products/office-365.jpg"
-                        alt="Office 365"
-                        width={60}
-                        height={60}
-                      />
-                    </div>
-                    <div className="subscription-details">
-                      <h3>Microsoft Office 365</h3>
-                      <p className="subscription-plan">Family Plan</p>
-                      <p className="subscription-renewal">Renews on May 21, 2025</p>
-                    </div>
-                    <div className="subscription-price">
-                      <span>$99.99</span>
-                      <span className="period">/ year</span>
-                    </div>
-                    <div className="subscription-actions">
-                      <button className="btn btn-sm btn-outline">Manage</button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             )}
 
-            {/* Payment Methods Tab (placeholder) */}
+            {/* Payment Methods Tab */}
             {activeTab === 'payment' && (
               <div className="tab-content">
                 <h2>Payment Methods</h2>
@@ -381,7 +463,7 @@ export default function AccountPage() {
               </div>
             )}
 
-            {/* Notifications Tab (placeholder) */}
+            {/* Notifications Tab */}
             {activeTab === 'notifications' && (
               <div className="tab-content">
                 <h2>Notifications</h2>
@@ -396,7 +478,7 @@ export default function AccountPage() {
                         <p>Receive emails about your order status</p>
                       </div>
                       <label className="toggle-switch">
-                        <input type="checkbox" checked />
+                        <input type="checkbox" defaultChecked />
                         <span className="toggle-slider"></span>
                       </label>
                     </div>
@@ -407,7 +489,7 @@ export default function AccountPage() {
                         <p>Get notified about special offers and discounts</p>
                       </div>
                       <label className="toggle-switch">
-                        <input type="checkbox" checked />
+                        <input type="checkbox" defaultChecked />
                         <span className="toggle-slider"></span>
                       </label>
                     </div>
@@ -427,7 +509,7 @@ export default function AccountPage() {
               </div>
             )}
 
-            {/* Security Tab (placeholder) */}
+            {/* Security Tab */}
             {activeTab === 'security' && (
               <div className="tab-content">
                 <h2>Security</h2>
@@ -458,22 +540,13 @@ export default function AccountPage() {
                     <div className="session-item">
                       <div className="session-info">
                         <h4>Current session</h4>
-                        <p>macOS • Safari • San Francisco, CA</p>
+                        <p>Browser • {navigator.userAgent.includes('Chrome') ? 'Chrome' : 
+                              navigator.userAgent.includes('Firefox') ? 'Firefox' : 
+                              navigator.userAgent.includes('Safari') ? 'Safari' : 'Browser'}</p>
                         <span className="active-tag">Active now</span>
                       </div>
                       <div>
                         <button className="btn btn-text">This is me</button>
-                      </div>
-                    </div>
-                    
-                    <div className="session-item">
-                      <div className="session-info">
-                        <h4>Previous session</h4>
-                        <p>iOS • Mobile Safari • San Francisco, CA</p>
-                        <span className="time">2 days ago</span>
-                      </div>
-                      <div>
-                        <button className="btn btn-text btn-danger">Sign out</button>
                       </div>
                     </div>
                   </div>
